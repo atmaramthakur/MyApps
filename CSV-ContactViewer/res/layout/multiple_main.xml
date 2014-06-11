@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <EditText android:layout_width="fill_parent" android:id="@+id/search_field"
+    android:layout_height="wrap_content" android:hint="Search" android:drawableLeft="@android:drawable/ic_menu_search"></EditText>
+<ListView android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:id="@android:id/list">
+</ListView>
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:id="@android:id/empty"
+    android:text="No CSV file selected. Press menu to Load a CSV file"
+    />
+</LinearLayout>

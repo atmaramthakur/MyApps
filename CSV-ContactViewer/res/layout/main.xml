@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <include
+        android:id="@+id/ad_banner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        layout="@layout/ad_banner" />
+
+    <EditText
+        android:id="@+id/search_field"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:drawableLeft="@android:drawable/ic_menu_search"
+        android:hint="Search" >
+    </EditText>
+
+    <ListView
+        android:id="@+id/csv_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/search_field" >
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" 
+        android:id="@+id/empty_layout"
+        >
+
+        <TextView
+            android:id="@android:id/empty"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/search_field"
+            android:text="No CSV file selected. Press menu to Load a CSV file or click below to create a file." />
+
+        <Button
+            android:id="@+id/create_csv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create CSV" />
+    </LinearLayout>
+
+</RelativeLayout>

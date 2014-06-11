@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:yourapp="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/action_import"
+        android:icon="@android:drawable/ic_input_get"
+        android:showAsAction="ifRoom"
+        android:title="Import"/>
+    <item
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="Search"
+        yourapp:actionViewClass="android.support.v7.widget.SearchView"
+        yourapp:showAsAction="ifRoom|collapseActionView"/>
+			menu.add(0, 3, 3, "Deselect All");
+			menu.add(0, 4, 4, "Save Contact");
+			menu.add(0, 5, 5, "Send SMS");
+			menu.add(0, 6, 6, "Send Email");
+    <item
+        android:id="@+id/select_all"
+        android:showAsAction="ifRoom|collapseActionView"
+        android:title="Select All"/>
+    <item
+        android:id="@+id/deselect_all"
+        android:showAsAction="ifRoom|collapseActionView"
+        android:title="Deselect All"/>
+    <item
+        android:id="@+id/save_contact"
+        android:showAsAction="ifRoom|collapseActionView"
+        android:title="Save Contact"/>
+    <item
+        android:id="@+id/send_sms"
+        android:showAsAction="ifRoom|collapseActionView"
+        android:title="Send SMS"/>
+    <item
+        android:id="@+id/send_email"
+        android:showAsAction="ifRoom|collapseActionView"
+        android:title="Send Email"/>
+
+</menu>
