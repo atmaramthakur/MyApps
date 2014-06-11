@@ -17,6 +17,7 @@ public class Constants {
 	public static final int DIALOG_UNSUPPORTED_FILE = 4;
 	public static final int DIALOG_NEW_ENTRY = 5;
 	public static final int DIALOG_EDIT_ENTRY = 6;
+	public static final int DIALOG_FILE_NAME = 7;
 	
 	public static final int REQUEST_FILE_PATH = 0;
 }

@@ -2,7 +2,6 @@ package com.atm.csvviewer;
 
 import java.util.Vector;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -11,8 +10,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -23,7 +24,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -49,6 +52,7 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 	int selectionMode = SELECTION_MODE_SINGLE;
 	ListView listView;
 	EditText searchField;
+	boolean bNewFileCreated;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -103,6 +107,18 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 	    		super.onAdFailedToLoad(errorCode);
 	    		Log.d("", "Failed to load "+errorCode);
 	    	}
+		});
+	    
+	    Button create = (Button) findViewById(R.id.create_csv);
+	    create.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//showDialog(id);
+				loadItemsFromCSV(null);
+				bNewFileCreated = true;
+				findViewById(R.id.empty_layout).setVisibility(View.GONE);
+			}
 		});
 		
 	}
@@ -252,7 +268,12 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 	private void loadItemsFromCSV(String path) {
 		if (manager == null)
 			manager = new CSVManager(this);
-		Vector<CSVRowItem> items = manager.importData(path);
+		Vector<CSVRowItem> items;
+		if(path == null){
+			items = manager.importData(getResources().openRawResource(R.raw.test));
+		}else{
+			items = manager.importData(path);
+		}
 		if (items == null)
 			return;
 		((EditText) findViewById(R.id.search_field)).setEnabled(true);
@@ -430,12 +451,51 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 			
 			d = editEntryBuilder.create();
 			break;*/
+		case Constants.DIALOG_FILE_NAME:
+			d = createFileNameDialog();
+			break;
 		default:
 			d = super.onCreateDialog(id);
 			break;
 		}
 		return d;
 	}
+
+	private Dialog createFileNameDialog() {
+		AlertDialog.Builder newEntryBuilder = new AlertDialog.Builder(this);
+		newEntryBuilder.setTitle("Save File");
+		final LinearLayout layout = (LinearLayout)inflater.inflate(R.layout.unsaved_dialog, null);
+
+		newEntryBuilder.setView(layout);
+		
+		newEntryBuilder.setPositiveButton("Save", new OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				EditText tv = (EditText)layout.findViewById(R.id.edit_filename);
+				String fileName = tv.getText().toString();
+				if(!TextUtils.isEmpty(fileName)){
+					if(Environment.isExternalStorageEmulated()){
+						String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+fileName+".csv";
+						manager.exportData(path, adapter.getAllItems());
+						manager.saveFilePath(path);
+						bNewFileCreated = false;
+					}
+				}else{
+					showDialog(Constants.DIALOG_FILE_NAME);
+				}
+			}});
+		
+		newEntryBuilder.setNegativeButton("Cancel", new OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				arg0.cancel();
+			}});
+		
+		return newEntryBuilder.create();
+	}
+
 
 	public Dialog createAlert(String title, String msg) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -520,18 +580,25 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		if(keyCode == KeyEvent.KEYCODE_BACK){
+			if(listModified){
+				if(bNewFileCreated){
+					showDialog(Constants.DIALOG_FILE_NAME);
+					return false;
+				}else{
+				// save the file (if needed)
+				manager.exportData(getStoredPath(), adapter.getAllItems());
+				}
+			}
 			if(selectionMode == SELECTION_MODE_MULTIPLE){
-			selectionMode = SELECTION_MODE_SINGLE;
-			loadScreen();
-			return false;
-			}else if(GAdManager.displayInterstitial()){
+				selectionMode = SELECTION_MODE_SINGLE;
+				loadScreen();
+				return false;
+			}
+			else if(GAdManager.displayInterstitial()){
 				
 			}
 		}
-		if(listModified){
-			// save the file (if needed)
-			manager.exportData(getStoredPath(), adapter.getAllItems());
-		}
+		
 		return super.onKeyDown(keyCode, event);
 	}
 

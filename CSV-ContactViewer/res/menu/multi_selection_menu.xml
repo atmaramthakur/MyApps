@@ -5,7 +5,7 @@
     <item
         android:id="@+id/action_import"
         android:icon="@android:drawable/ic_input_get"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="Import"/>
     <item
         android:id="@+id/action_search"
@@ -13,10 +13,6 @@
         android:title="Search"
         yourapp:actionViewClass="android.support.v7.widget.SearchView"
         yourapp:showAsAction="ifRoom|collapseActionView"/>
-			menu.add(0, 3, 3, "Deselect All");
-			menu.add(0, 4, 4, "Save Contact");
-			menu.add(0, 5, 5, "Send SMS");
-			menu.add(0, 6, 6, "Send Email");
     <item
         android:id="@+id/select_all"
         android:showAsAction="ifRoom|collapseActionView"

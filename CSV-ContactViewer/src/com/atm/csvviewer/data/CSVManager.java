@@ -73,12 +73,7 @@ public class CSVManager  {
 				}
 			}
 			
-			// save the file name
-			SharedPreferences pref = activity.getSharedPreferences(Constants.SETTINGS, Activity.MODE_PRIVATE);
-			Editor editor = pref.edit();
-			editor.putString(Constants.STORED_PATH, ImportFileName);
-			editor.commit();
-			
+			saveFilePath(ImportFileName);
 			return csvData;
 		} catch (FileNotFoundException e) {
 			activity.showDialog(Constants.DIALOG_NO_FILE_FOUND);
@@ -91,13 +86,21 @@ public class CSVManager  {
 	
 	}
 	
+	public void saveFilePath(String ImportFileName) {
+		// save the file name
+		SharedPreferences pref = activity.getSharedPreferences(Constants.SETTINGS, Activity.MODE_PRIVATE);
+		Editor editor = pref.edit();
+		editor.putString(Constants.STORED_PATH, ImportFileName);
+		editor.commit();
+	}
 	public CSVRowItem getTitle() {
 		return title;
 	}
 	
 	public void exportData(String path, Vector<CSVRowItem> items){
-		OutputStreamWriter out =null;
+		if(path == null) return;
 		StringBuffer buf= new StringBuffer();
+		OutputStreamWriter out =null;
 		File file = new File(path);
 		FileOutputStream fos;
 		try {
@@ -133,6 +136,30 @@ public class CSVManager  {
 				e.printStackTrace();
 			}
 		}
+	}
+	public Vector<CSVRowItem> importData(InputStream is) {
+		Vector<CSVRowItem> csvData = new Vector<CSVRowItem>();
+		try{
+		InputStreamReader inputreader = new InputStreamReader(is); 
+		BufferedReader buf = new BufferedReader(inputreader); 		
+		String str = buf.readLine();//reading headers
+		System.out.println("Heading : "+str);
+		title = new CSVRowItem(str);
+//		Vector<CSVRowItem> csvData = new Vector<CSVRowItem>();
+		//csvData.add(new CSVRowItem(str));
+		while((str = buf.readLine())!=null)				
+		{
+			if(str.trim().length() == 0) continue;
+			CSVRowItem rowItem = new CSVRowItem(str);
+			if(rowItem.getColumnValues().length > 0){
+				csvData.add(rowItem);
+				System.out.println("Added" + rowItem);
+			}
+		}
+		}catch(Exception e){
+			
+		}
+		return csvData;
 	}
 	
 }
