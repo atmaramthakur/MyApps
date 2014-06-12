@@ -11,7 +11,10 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -51,7 +54,7 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 	public static final int SELECTION_MODE_MULTIPLE = 1;
 	int selectionMode = SELECTION_MODE_SINGLE;
 	ListView listView;
-	EditText searchField;
+	//EditText searchField;
 	boolean bNewFileCreated;
 	/** Called when the activity is first created. */
 	@Override
@@ -62,34 +65,34 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 		
 		listView = (ListView)findViewById(R.id.csv_list);
 		listView.setOnItemClickListener(this);
-		searchField = (EditText) findViewById(R.id.search_field);
-		searchField.setEnabled(false);
-		searchField.addTextChangedListener(new TextWatcher() {
-
-			@Override
-			public void afterTextChanged(Editable arg0) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-				// if(adapter.getCount() >0)
-				adapter.updateAdapter(s.toString().toLowerCase());
-				if (adapter.getCount() == 0) {
-					TextView empty = (TextView) findViewById(android.R.id.empty);
-					empty.setText("No match found.");
-				}
-			}
-		});
+//		searchField = (EditText) findViewById(R.id.search_field);
+//		searchField.setEnabled(false);
+//		searchField.addTextChangedListener(new TextWatcher() {
+//
+//			@Override
+//			public void afterTextChanged(Editable arg0) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//
+//			@Override
+//			public void beforeTextChanged(CharSequence s, int start, int count,
+//					int after) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//
+//			@Override
+//			public void onTextChanged(CharSequence s, int start, int before,
+//					int count) {
+//				// if(adapter.getCount() >0)
+//				adapter.updateAdapter(s.toString().toLowerCase());
+//				if (adapter.getCount() == 0) {
+//					TextView empty = (TextView) findViewById(android.R.id.empty);
+//					empty.setText("No match found.");
+//				}
+//			}
+//		});
 
 		loadScreen();
 
@@ -136,7 +139,7 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 		if(items == null){
 			String storedPath = getStoredPath();
 			if(storedPath == null){
-				searchField.setVisibility(View.GONE);
+				//searchField.setVisibility(View.GONE);
 			}else{
 				loadItemsFromCSV(storedPath);
 				findViewById(R.id.empty_layout).setVisibility(View.GONE);
@@ -184,6 +187,7 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 //			menu.add(0, 5, 5, "Send SMS");
 //			menu.add(0, 6, 6, "Send Email");
 		}
+		initialiseSearch(menu);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -252,6 +256,34 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 	}
 
 	
+	private void initialiseSearch(Menu menu){
+		MenuItem searchItem = menu.findItem(R.id.action_search);
+		if(searchItem == null) return;
+		SearchView searchView = (SearchView) MenuItemCompat
+				.getActionView(searchItem);
+		searchView.setOnQueryTextListener(new OnQueryTextListener() {
+
+			@Override
+			public boolean onQueryTextSubmit(String arg0) {
+				
+				return false;
+			}
+
+			@Override
+			public boolean onQueryTextChange(String s) {
+				if (adapter != null) {
+					adapter.updateAdapter(s.toString().toLowerCase());
+					if (adapter.getCount() == 0) {
+						TextView empty = (TextView) findViewById(android.R.id.empty);
+						empty.setText("No match found.");
+					}
+					return true;
+				}
+				return false;
+			}
+		});
+	}
+	
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -276,7 +308,7 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 		}
 		if (items == null)
 			return;
-		((EditText) findViewById(R.id.search_field)).setEnabled(true);
+//		((EditText) findViewById(R.id.search_field)).setEnabled(true);
 		// System.out.println("Items "+items);
 		adapter.setCSVItems(items);
 		listView.setAdapter(adapter);

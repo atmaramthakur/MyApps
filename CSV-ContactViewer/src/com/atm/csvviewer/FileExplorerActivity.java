@@ -86,12 +86,12 @@ public class FileExplorerActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
     	// TODO Auto-generated method stub
-    	if(keyCode == KeyEvent.KEYCODE_BACK && !adShown){
-    		if(!GAdManager.displayInterstitial())
-    			return super.onKeyDown(keyCode, event);
-    		adShown = true;
-    		return true;
-    	}else
+//    	if(keyCode == KeyEvent.KEYCODE_BACK && !adShown){
+////    		if(!GAdManager.displayInterstitial())
+////    			return super.onKeyDown(keyCode, event);
+////    		adShown = true;
+//    		return true;
+//    	}else
     	return super.onKeyDown(keyCode, event);
     }
 

@@ -10,20 +10,19 @@
         android:layout_alignParentBottom="true"
         layout="@layout/ad_banner" />
 
-    <EditText
+   <!--  <EditText
         android:id="@+id/search_field"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:drawableLeft="@android:drawable/ic_menu_search"
         android:hint="Search" >
-    </EditText>
+    </EditText> -->
 
     <ListView
         android:id="@+id/csv_list"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/search_field" >
+        android:layout_height="wrap_content" >
     </ListView>
 
     <LinearLayout
@@ -37,7 +36,6 @@
             android:id="@android:id/empty"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/search_field"
             android:text="No CSV file selected. Press menu to Load a CSV file or click below to create a file." />
 
         <Button
