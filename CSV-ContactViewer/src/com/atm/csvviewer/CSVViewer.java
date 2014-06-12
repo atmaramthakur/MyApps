@@ -583,6 +583,7 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 			if(listModified){
 				if(bNewFileCreated){
 					showDialog(Constants.DIALOG_FILE_NAME);
+					bNewFileCreated = false;
 					return false;
 				}else{
 				// save the file (if needed)
@@ -628,6 +629,13 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 			((CSVListAdapter)adapter).toggleItem(position);
 		}
 		
+	}
+	
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		((CSVApplication)getApplication()).startScreen(this);
 	}
 	
 //	protected void onListItemClick(ListView l, View v, int position, long id) {
