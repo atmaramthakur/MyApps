@@ -5,13 +5,17 @@ import java.util.Vector;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.Filterable;
+import android.widget.Filter;
 
 import com.atm.csvviewer.util.Utils;
 
-public class CSVListAdapter extends ArrayAdapter<String>{
+public class CSVListAdapter extends ArrayAdapter<String> implements Filterable{
 
 	Context ctx;
+	private ItemFilter mFilter = new ItemFilter();
 	public CSVListAdapter(Context ctx, int typeId) {
 		super(ctx, typeId);
 		this.ctx = ctx;
@@ -25,26 +29,27 @@ public class CSVListAdapter extends ArrayAdapter<String>{
 	}*/
 	public void setCSVItems(Vector<CSVRowItem> items){
 		this.filterItems = items;
-		this.items.addAll(items);
+		this.items = items;
 		for (int i = 0; i < items.size(); i++) {
 			add(items.elementAt(i).getTitle());
 		}
 	}
 	
 	public void addCSVItem(CSVRowItem item){
+		Log.d(" ", "Before adding "+items+" ---  "+filterItems);
 		this.items.add(item);
-		this.filterItems = items;
+		//this.filterItems.add(item);
 		add(item.getTitle());
 		
-		System.out.println("after adding "+items+" count"+getCount());
+		System.out.println("after adding "+items+" count"+getCount()+ " filterItems "+filterItems);
 	}
 	
 	public void updateCSVItem(CSVRowItem item, int index){
 		this.items.set(index, item);
-		this.filterItems = items;
+		this.filterItems.set(index, item);
 		//add(item.getTitle());
 		
-		System.out.println("after adding "+items+" count"+getCount());
+		System.out.println("after updating "+items+" count"+getCount()+ " filterItems "+filterItems);
 	}
 	@Override
 	public int getCount() {
@@ -77,22 +82,24 @@ public class CSVListAdapter extends ArrayAdapter<String>{
 		((TextView)convertView).setText(filterItems.get(position).getTitle());
 		return convertView;
 	}*/
+	
 	public void updateAdapter(String s) {
-		//System.out.println("in Update Adapter for  filtering "+s+" :: items "+items);
+		System.out.println("in Update Adapter for  filtering "+s+" ::"+filterItems+" items "+items);
 		filterItems.removeAllElements();
+		System.out.println("in Update Adapter after  filtering "+filterItems+" :: items "+items);
 		if(s.length() == 0) {
 			filterItems.addAll(items);
 			notifyDataSetChanged();
 			return;
 		}
-		//System.out.println("filterItems : "+filterItems+" items "+items);
+		System.out.println("filterItems : "+filterItems+" items "+items);
 		for (int i = 0; i < items.size(); i++) {
 			//System.out.println("before comparing ");
 			String title = items.get(i).getTitle().toLowerCase();
 			//System.out.println("title "+title);
 			if(title.contains(s))filterItems.add(items.get(i));
 		}
-		//System.out.println("After updating filterItems"+filterItems.size()+" :: original "+items.size());
+		System.out.println("After updating filterItems"+filterItems.size()+" :: original "+items.size());
 		notifyDataSetChanged();
 	}
 	
@@ -158,6 +165,45 @@ public class CSVListAdapter extends ArrayAdapter<String>{
 		Utils.sendEmail(ctx, arr);
 	}
 
-	
+	public Filter getFilter() {
+		return mFilter;
+	}
+ 
+	private class ItemFilter extends Filter {
+		@Override
+		protected FilterResults performFiltering(CharSequence constraint) {
+			
+			String filterString = constraint.toString().toLowerCase();
+			
+			FilterResults results = new FilterResults();
+			
+			final Vector<CSVRowItem> list = items;
+ 
+			int count = list.size();
+			final Vector<CSVRowItem> nlist = new Vector<CSVRowItem>(count);
+ 
+			String filterableString ;
+			
+			for (int i = 0; i < count; i++) {
+				filterableString = list.get(i).getTitle();
+				if (filterableString.toLowerCase().contains(filterString)) {
+					nlist.add(list.get(i));
+				}
+			}
+			
+			results.values = nlist;
+			results.count = nlist.size();
+ 
+			return results;
+		}
+ 
+		@SuppressWarnings("unchecked")
+		@Override
+		protected void publishResults(CharSequence constraint, FilterResults results) {
+			filterItems = (Vector<CSVRowItem>) results.values;
+			notifyDataSetChanged();
+		}
+ 
+	}
 
 }

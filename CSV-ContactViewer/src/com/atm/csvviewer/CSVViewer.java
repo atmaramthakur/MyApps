@@ -54,8 +54,9 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 	public static final int SELECTION_MODE_MULTIPLE = 1;
 	int selectionMode = SELECTION_MODE_SINGLE;
 	ListView listView;
-	//EditText searchField;
+//	EditText searchField;
 	boolean bNewFileCreated;
+	String TAG = "CSVViewer";
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -86,7 +87,8 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 //			public void onTextChanged(CharSequence s, int start, int before,
 //					int count) {
 //				// if(adapter.getCount() >0)
-//				adapter.updateAdapter(s.toString().toLowerCase());
+//				//adapter.updateAdapter(s.toString().toLowerCase());
+//				adapter.getFilter().filter(s);
 //				if (adapter.getCount() == 0) {
 //					TextView empty = (TextView) findViewById(android.R.id.empty);
 //					empty.setText("No match found.");
@@ -126,9 +128,8 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 		
 	}
 
-
+	Vector<CSVRowItem> items;
 	private void loadScreen() {
-		Vector<CSVRowItem> items = null;
 		if(adapter != null) items = adapter.getAllItems();
 		if(selectionMode == SELECTION_MODE_SINGLE){
 			adapter = new CSVListAdapter(this, android.R.layout.simple_list_item_1);
@@ -140,6 +141,7 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 			String storedPath = getStoredPath();
 			if(storedPath == null){
 				//searchField.setVisibility(View.GONE);
+				//loadItemsFromCSV(storedPath);
 			}else{
 				loadItemsFromCSV(storedPath);
 				findViewById(R.id.empty_layout).setVisibility(View.GONE);
@@ -166,26 +168,16 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
 		menu.clear();
+		Log.d(TAG, "selectionMode "+selectionMode);
 		if(selectionMode == SELECTION_MODE_SINGLE){
+			Log.d(TAG, "selectionMode adapter.getCount() "+adapter.getCount());
 			if(adapter.getCount() == 0){
 				getMenuInflater().inflate(R.menu.import_menu, menu);
 			}else{
-				
 				getMenuInflater().inflate(R.menu.single_selection_menu, menu);
 			}
-//			menu.add(0, 0, 0, "Import CSV");
-//			if(adapter.getCount() > 0){
-//				menu.add(0, 1, 1, "Select Multiple");
-//				menu.add(0, 7, 7, "New Entry");
-//				menu.add(0, 8, 8, "Save List");
-//			}
 		}else{
 			getMenuInflater().inflate(R.menu.multi_selection_menu, menu);
-//			menu.add(0, 2, 2, "Select All");
-//			menu.add(0, 3, 3, "Deselect All");
-//			menu.add(0, 4, 4, "Save Contact");
-//			menu.add(0, 5, 5, "Send SMS");
-//			menu.add(0, 6, 6, "Send Email");
 		}
 		initialiseSearch(menu);
 		return super.onPrepareOptionsMenu(menu);
@@ -249,6 +241,10 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 				manager.exportData(getStoredPath(), adapter.getAllItems());
 			}
 			break;
+		case R.id.action_search:
+			Log.d("", "In action search"+adapter.getCount());
+			items = adapter.getAllItems();
+			break;
 		default:
 			break;
 		}
@@ -265,20 +261,26 @@ public class CSVViewer extends ActionBarActivity implements OnItemLongClickListe
 
 			@Override
 			public boolean onQueryTextSubmit(String arg0) {
-				
+				Log.d(TAG, "onQueryTextSubmit "+arg0);
 				return false;
 			}
 
 			@Override
 			public boolean onQueryTextChange(String s) {
-				if (adapter != null) {
-					adapter.updateAdapter(s.toString().toLowerCase());
-					if (adapter.getCount() == 0) {
-						TextView empty = (TextView) findViewById(android.R.id.empty);
-						empty.setText("No match found.");
-					}
-					return true;
-				}
+				Log.d(TAG, "onQueryTextChange "+s);
+				adapter.getFilter().filter(s);
+//				if (adapter != null && !TextUtils.isEmpty(s)) {
+//					adapter.updateAdapter(s);
+//					if (adapter.getCount() == 0) {
+//						TextView empty = (TextView) findViewById(android.R.id.empty);
+//						empty.setText("No match found.");
+//					}
+//					return true;
+//				}else{
+//					//adapter.updateAdapter(s);
+//					adapter.notifyDataSetInvalidated();
+//					Log.d(TAG, "adapter "+adapter.getAllItems());
+//				}
 				return false;
 			}
 		});
